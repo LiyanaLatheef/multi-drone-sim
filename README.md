@@ -80,3 +80,25 @@ After this, `which gazebo` and `which gzserver` returned proper paths, and
 - [x] `commander takeoff` successfully lifts the drone in sim
 
 **Phase 1 complete.**
+
+## Phase 2 Progress: PX4 ↔ ROS 2 Bridge
+
+Successfully bridged PX4 SITL (Gazebo) to ROS 2 using Micro XRCE-DDS Agent.
+
+### Issue: Standalone build failed
+Building Micro-XRCE-DDS-Agent v2.4.2 via plain cmake/make failed with:
+​```
+fatal: invalid reference: 2.12.x
+
+
+### Verification
+With PX4 SITL + Gazebo running, and the agent running:
+```bash
+source install/local_setup.bash
+MicroXRCEAgent udp4 -p 8888
+```
+
+Confirmed 74 `/fmu/...` topics visible via `ros2 topic list | grep fmu`, 
+including key command topics (`vehicle_command`, `trajectory_setpoint`, 
+`offboard_control_mode`) and telemetry topics (`vehicle_odometry`, 
+`vehicle_local_position`, `battery_status`).
