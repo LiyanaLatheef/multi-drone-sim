@@ -52,8 +52,31 @@ sudo systemctl disable unattended-upgrades
 Disabled auto-updates for the duration of development to avoid future 
 mid-build interruptions.
 
+### Gazebo executables missing after setup script
+**Problem:** `make px4_sitl gazebo-classic` failed at the final launch step with:
+"You need to have gazebo simulator installed!" — even though `gazebo --version` 
+had returned 11.10.2 earlier.
+
+**Root cause:** Only the Gazebo Classic *libraries* (`libgazebo11`, 
+`libgazebo-dev`, etc.) were installed — the actual `gazebo` and `gzserver` 
+executable binaries were missing. Confirmed with:
+​```bash
+which gazebo      # empty
+which gzserver    # empty
+find / -iname "gzserver" 2>/dev/null   # empty
+​```
+
+**Fix:**
+​```bash
+sudo apt install gazebo libgazebo11 libgazebo-dev -y
+​```
+After this, `which gazebo` and `which gzserver` returned proper paths, and 
+`make px4_sitl gazebo-classic` launched successfully.
+
 ## Verification
-- [ ] `make px4_sitl gazebo-classic` builds successfully
-- [ ] Gazebo window opens with a quadrotor model
-- [ ] `pxh>` shell prompt appears
-- [ ] `commander takeoff` successfully lifts the drone in sim
+- [x] `make px4_sitl gazebo-classic` builds successfully
+- [x] Gazebo window opens with a quadrotor model
+- [x] `pxh>` shell prompt appears
+- [x] `commander takeoff` successfully lifts the drone in sim
+
+**Phase 1 complete.**
